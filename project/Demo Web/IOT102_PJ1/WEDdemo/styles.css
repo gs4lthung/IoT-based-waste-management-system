@@ -1,0 +1,108 @@
+header{
+    display: flex;
+    justify-content: end;
+}
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Bin_full{
+    display: none;
+}
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.level_bin {
+    text-align: center; 
+    margin: 20px 0;
+}
+
+.level_bin button {
+    padding: 15px 30px;
+    font-size: 20px; 
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+}
+
+.level_bin button:hover {
+    background-color: #45a049;
+}
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left__content, .right__content {
+    width: 48%; 
+}
+
+/* Header Styles */
+header {
+    background-color: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    color: red;
+    margin: 0;
+    font-size: 24px; /* Adjust as needed */
+}
+
+header img {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Center the image */
+}
+
+/* Bin Status Styles */
+.Bin__status {
+    margin-bottom: 20px;
+}
+
+.Bin__status h2 {
+    text-align: center;
+}
+
+.Bin_full img, .Bin_Notfull img {
+    width: 60%;
+    height: auto;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+

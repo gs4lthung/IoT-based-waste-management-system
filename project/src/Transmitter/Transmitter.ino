@@ -1,49 +1,72 @@
 #include <SPI.h>
 #include <LoRa.h>
-#include <ESP8266WiFi.h>
-#include <BlynkSimpleEsp8266.h>
+#include <Servo.h>
+#include <NewPing.h>
 
-#define SENSOR_PIN D0 // GPIO pin connected to D0 of TCRT5000
-#define LORA_SS_PIN D8
-#define LORA_RST_PIN D4
-#define LORA_DI0_PIN D1
+#define TRIGGER_PIN_1 7
+#define ECHO_PIN_1 6
+#define TRIGGER_PIN_2 5
+#define ECHO_PIN_2 4
+#define SERVO_PIN 3
+#define LORA_SS_PIN 10
+#define LORA_RST_PIN 9
+#define LORA_DI0_PIN 2
+#define CLOSE_DISTANCE 10
 
-char auth[] = "szH8X2Z-JgyoMdlmsjsPznAW-A6xerNK";
-char ssid[] = "IZY coffee";
-char pass[] = "12345678";
+NewPing sonar1(TRIGGER_PIN_1, ECHO_PIN_1);
+NewPing sonar2(TRIGGER_PIN_2, ECHO_PIN_2);
+Servo myServo;
 
-void setup() {
-  Serial.begin(9600);
-  Blynk.begin(auth, ssid, pass);
+int binFullCount = 0;
+
+void setup()
+{
+  Serial.begin(115200);
 
   LoRa.setPins(LORA_SS_PIN, LORA_RST_PIN, LORA_DI0_PIN);
-  if (!LoRa.begin(433E6)) {
+  myServo.attach(SERVO_PIN);
+  if (!LoRa.begin(433E6))
+  {
     Serial.println("LoRa init failed. Check your connections!");
-    while (1);
+    while (1)
+      ;
   }
   Serial.println("LoRa init successful.");
 }
 
-void loop() {
-  int sensorValue = digitalRead(SENSOR_PIN); // Read the sensor value
+void loop()
+{
+  int distance1 = sonar1.ping_cm();
+  int distance2 = sonar2.ping_cm();
 
-  String trashStatus;
-  if (sensorValue == 1) {
-    trashStatus = "Trash bin IS NOT FULL";
-    Blynk.virtualWrite(V0, 0); // Update Blynk Switch to "IS NOT FULL"
-  } else {
-    trashStatus = "Trash bin IS FULL";
-    Blynk.virtualWrite(V0, 1); // Update Blynk Switch to "IS FULL"
+  bool isHumanNearby = false;
+  if (distance1 <= CLOSE_DISTANCE)
+  {
+    isHumanNearby = true;
+    myServo.write(90);
   }
-  // Convert integer value to bytes
-  byte payload[sizeof(int)];
-  memcpy(payload, &sensorValue, sizeof(int));
-  
-  LoRa.beginPacket();
-  LoRa.write(payload, sizeof(int));         
-  LoRa.endPacket();
-  Serial.println(trashStatus+" --> Sent: " + sensorValue);
+  else
+  {
+    isHumanNearby = false;
+    myServo.write(0);
+  }
 
-  delay(3000);
-  Blynk.run();
+  float emptyDistance = 30.0;
+  float fullDistance = 5.0;
+  float currentDistance = distance2;
+  float percentage = 100.0 - ((currentDistance - fullDistance) / (emptyDistance - fullDistance)) * 100.0;
+  percentage = constrain(percentage, 0, 100);
+
+  // Construct the data to send via LoRa
+  String dataToSend = String(percentage) + ", " + String(isHumanNearby);
+
+  // Send the data via LoRa
+  LoRa.beginPacket();
+  LoRa.print(dataToSend);
+  LoRa.endPacket();
+
+  // Print the sent data to the Serial Monitor
+  Serial.println("Sent 1 & 2: " + dataToSend);
+
+  delay(1000);
 }
