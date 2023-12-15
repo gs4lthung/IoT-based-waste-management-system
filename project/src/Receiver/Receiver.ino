@@ -1,13 +1,15 @@
-#define BLYNK_PRINT Serial
-#define BLYNK_TEMPLATE_ID "TMPL6bP4FNpNI"
-#define BLYNK_TEMPLATE_NAME "PROJECT"
-#define BLYNK_AUTH_TOKEN "BvH3H3framvDOR6LVOmWDs9oAELIIZ9D"
 #include <LoRa.h>
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 #include <NewPing.h>
 #include <NTPClient.h>
 #include <TimeLib.h>
+
+//Blynk account
+#define BLYNK_TEMPLATE_ID "..."
+#define BLYNK_TEMPLATE_NAME "..."
+#define BLYNK_AUTH_TOKEN "..."
+#define BLYNK_PRINT Serial
 
 #define LORA_SS_PIN D8
 #define LORA_RST_PIN D4
